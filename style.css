@@ -10,7 +10,6 @@ body {
   font-family: "Inter", sans-serif;
 }
 
-/* Subtle Reveal Animation */
 @keyframes subtleReveal {
   0% {
     transform: scale(0.92);
@@ -25,7 +24,6 @@ body {
   animation: subtleReveal 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Minimal Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 4px;
   height: 4px;

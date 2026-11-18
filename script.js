@@ -1,6 +1,3 @@
-/* ==========================================================================
-           1. DATASETS (Thai Consonants, English A-Z, Minimal Curated Colors)
-           ========================================================================== */
 const THAI_CONSONANTS = [
   { char: "ก", name: "ก ไก่" },
   { char: "ข", name: "ข ไข่" },
@@ -55,29 +52,22 @@ const ENGLISH_LETTERS = Array.from({ length: 26 }, (_, i) => {
 });
 
 const COLORS = [
-  { nameTh: "สีแดง", nameEn: "Crimson Red", hex: "#EF4444" },
-  { nameTh: "สีส้ม", nameEn: "Tangerine Orange", hex: "#F97316" },
-  { nameTh: "สีเหลืองอำพัน", nameEn: "Amber Yellow", hex: "#F59E0B" },
-  { nameTh: "สีเขียวมรกต", nameEn: "Emerald Green", hex: "#10B981" },
-  { nameTh: "สีเขียวมิ้นต์", nameEn: "Mint Teal", hex: "#14B8A6" },
-  { nameTh: "สีฟ้าคราม", nameEn: "Sky Blue", hex: "#0EA5E9" },
-  { nameTh: "สีน้ำเงินโคบอลต์", nameEn: "Cobalt Blue", hex: "#3B82F6" },
-  { nameTh: "สีน้ำเงินเข้ม", nameEn: "Indigo", hex: "#6366F1" },
-  { nameTh: "สีม่วงไวโอเล็ต", nameEn: "Violet", hex: "#8B5CF6" },
-  { nameTh: "สีชมพูโรส", nameEn: "Rose Pink", hex: "#F43F5E" },
-  { nameTh: "สีชมพูซากุระ", nameEn: "Soft Pink", hex: "#F472B6" },
-  { nameTh: "สีขาวบริสุทธิ์", nameEn: "Pure White", hex: "#F4F4F5" },
-  { nameTh: "สีเทาสเลท", nameEn: "Slate Gray", hex: "#64748B" },
-  { nameTh: "สีดำออบซิเดียน", nameEn: "Obsidian Black", hex: "#18181B" },
-  { nameTh: "สีน้ำตาลเอิร์ธ", nameEn: "Warm Brown", hex: "#A16207" },
-  { nameTh: "สีเขียวมะกอก", nameEn: "Olive Lime", hex: "#84CC16" },
-];
+            { nameTh: 'สีแดง', nameEn: 'Red', hex: '#EF4444' },
+            { nameTh: 'สีส้ม', nameEn: 'Orange', hex: '#F97316' },
+            { nameTh: 'สีเหลือง', nameEn: 'Yellow', hex: '#EAB308' },
+            { nameTh: 'สีเขียว', nameEn: 'Green', hex: '#22C55E' },
+            { nameTh: 'สีฟ้า', nameEn: 'Light Blue', hex: '#38BDF8' },
+            { nameTh: 'สีน้ำเงิน', nameEn: 'Blue', hex: '#2563EB' },
+            { nameTh: 'สีม่วง', nameEn: 'Purple', hex: '#9333EA' },
+            { nameTh: 'สีชมพู', nameEn: 'Pink', hex: '#EC4899' },
+            { nameTh: 'สีน้ำตาล', nameEn: 'Brown', hex: '#92400E' },
+            { nameTh: 'สีขาว', nameEn: 'White', hex: '#FFFFFF' },
+            { nameTh: 'สีเทา', nameEn: 'Gray', hex: '#71717A' },
+            { nameTh: 'สีดำ', nameEn: 'Black', hex: '#18181B' }
+        ];
 
-/* ==========================================================================
-           2. STATE
-           ========================================================================== */
 const state = {
-  currentMode: "thai", // 'thai' | 'eng' | 'color'
+  currentMode: "thai", 
   isSpinning: false,
   soundEnabled: true,
   noRepeat: false,
@@ -93,9 +83,6 @@ const state = {
   },
 };
 
-/* ==========================================================================
-           3. SOFT WEB AUDIO SYNTHESIZER
-           ========================================================================== */
 let audioCtx = null;
 
 function initAudio() {
@@ -138,7 +125,7 @@ function playSoftChime() {
     initAudio();
     if (!audioCtx) return;
 
-    const freqs = [523.25, 659.25]; // Gentle C5 -> E5
+    const freqs = [523.25, 659.25]; 
     freqs.forEach((f, idx) => {
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
@@ -176,9 +163,6 @@ function toggleSound() {
   }
 }
 
-/* ==========================================================================
-           4. MODE & POOL LOGIC
-           ========================================================================== */
 function getDataset(mode) {
   if (mode === "thai") return THAI_CONSONANTS;
   if (mode === "eng") return ENGLISH_LETTERS;
@@ -192,11 +176,9 @@ function switchMode(mode) {
   const modes = ["thai", "eng", "color"];
   const index = modes.indexOf(mode);
 
-  // Slide indicator
   const indicator = document.getElementById("tabIndicator");
   indicator.style.transform = `translateX(${index * 100}%)`;
 
-  // Update tab text colors
   modes.forEach((m) => {
     const btn = document.getElementById(`tab-${m}`);
     if (m === mode) {
@@ -222,7 +204,7 @@ function resetDisplayPlaceholder() {
     color: {
       symbol:
         '<span class="w-8 h-8 rounded-full border border-zinc-600 inline-block"></span>',
-      text: "พร้อมสุ่มสีต่างๆ 16 เฉดสี",
+      text: "พร้อมสุ่มสีต่างๆ 12 เฉดสี",
     },
   };
   const p = placeholders[state.currentMode];
@@ -284,9 +266,6 @@ function resetModePool() {
   playSoftTick(0.6);
 }
 
-/* ==========================================================================
-           5. SPINNING & RENDERING
-           ========================================================================== */
 function startRandomSpin() {
   if (state.isSpinning) return;
 
@@ -400,9 +379,6 @@ function renderResult(mode, item, isFinal) {
   }
 }
 
-/* ==========================================================================
-           6. HISTORY & KEYBOARD SHORTCUT
-           ========================================================================== */
 function recordHistory(mode, item) {
   state.history[mode].unshift(item);
   if (state.history[mode].length > 24) {
@@ -457,7 +433,6 @@ function clearCurrentHistory() {
   playSoftTick(0.3);
 }
 
-// Spacebar shortcut to trigger spin
 window.addEventListener("keydown", (e) => {
   if (e.code === "Space" && document.activeElement.tagName !== "BUTTON") {
     e.preventDefault();
