@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="th" class="dark">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>สุ่มตัวอักษร & สี | Minimal Random Picker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link rel="stylesheet" href="style.css"/>
+  </head>
+  <body class="antialiased selection:bg-zinc-700 selection:text-white flex flex-col justify-between">
+    <header class="w-full max-w-xl mx-auto px-5 pt-6 flex items-center justify-between">
+      <span class="text-xs font-inter tracking-widest uppercase text-zinc-500">RANDOM PICKER</span>
+
+      <button id="soundToggleBtn" onclick="toggleSound()" aria-label="เปิดหรือปิดเสียง" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#16161a] hover:bg-[#1e1e24] border border-white/[0.08] text-zinc-400 hover:text-zinc-200 transition-colors text-xs">
+        <i id="soundIcon" class="fa-solid fa-volume-high text-zinc-300"></i>
+        <span id="soundLabel">เสียงเปิด</span>
+      </button>
+    </header>
+
+    <main class="w-full max-w-xl mx-auto px-5 py-6 flex-1 flex flex-col items-center justify-center">
+      <div class="text-center mb-7">
+        <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight text-zinc-100">เกมสุ่มตัวอักษร &amp; สี</h1>
+        <p class="text-xs sm:text-sm text-zinc-500 mt-1.5 font-light">
+          เลือกหมวดหมู่ที่ต้องการ แล้วกดสุ่มหรือกด Spacebar
+        </p>
+      </div>
+
+      <nav aria-label="โหมดการสุ่ม" class="w-full mb-5">
+        <div class="relative grid grid-cols-3 p-1 bg-[#16161a] rounded-xl border border-white/[0.08]">
+          <div id="tabIndicator" class="absolute top-1 bottom-1 left-1 w-[calc(33.333%-0.25rem)] bg-zinc-100 rounded-lg transition-transform duration-300 ease-out pointer-events-none"></div>
+
+          <button onclick="switchMode('thai')" id="tab-thai" class="relative z-10 py-2.5 text-sm font-medium transition-colors duration-200 text-zinc-950">ก-ฮ</button>
+
+          <button onclick="switchMode('eng')" id="tab-eng" class="relative z-10 py-2.5 text-sm font-medium transition-colors duration-200 text-zinc-400 hover:text-zinc-200">A-Z</button>
+
+          <button onclick="switchMode('color')" id="tab-color" class="relative z-10 py-2.5 text-sm font-medium transition-colors duration-200 text-zinc-400 hover:text-zinc-200">สีต่างๆ</button>
+        </div>
+      </nav>
+
+      <section class="w-full bg-[#16161a] rounded-2xl border border-white/[0.08] p-6 sm:p-8 flex flex-col items-center">
+        <div class="w-full flex items-center justify-between text-xs text-zinc-500 pb-4 mb-6 border-b border-white/[0.06]">
+          <span id="poolCounter">ทั้งหมด 44 รายการ</span>
+
+          <div class="flex items-center gap-2.5">
+            <label for="noRepeatToggle" class="cursor-pointer select-none text-zinc-400 hover:text-zinc-200 transition-colors">ไม่สุ่มซ้ำ</label>
+            <button type="button" id="noRepeatToggle" role="switch" aria-checked="false" onclick="toggleNoRepeat()" class="relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border border-white/[0.1] bg-zinc-800 transition-colors duration-200 focus:outline-none">
+              <span id="noRepeatKnob" class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-zinc-400 transition duration-200 translate-x-0 mt-[1px] ml-[1px]"></span>
+            </button>
+          </div>
+        </div>
+
+        <div id="displayStage" class="w-full min-h-[220px] sm:min-h-[250px] flex flex-col items-center justify-center text-center my-2">
+          <div id="resultContainer" class="flex flex-col items-center justify-center w-full">
+            <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl bg-[#111114] border border-white/[0.07] flex items-center justify-center mb-4">
+              <span class="text-3xl sm:text-4xl font-semibold text-zinc-500 tracking-wider">ก-ฮ</span>
+            </div>
+            <p class="text-sm text-zinc-400">พร้อมสุ่มพยัญชนะไทย 44 ตัว</p>
+          </div>
+        </div>
+
+        <div id="inlineAlert" class="hidden w-full mt-4 px-3.5 py-2.5 rounded-xl bg-zinc-900 border border-white/[0.1] text-zinc-300 text-xs flex items-center justify-between gap-2">
+          <span id="inlineAlertText">สุ่มครบทุกรายการแล้ว</span>
+          <button onclick="resetModePool()" class="px-2.5 py-1 rounded-lg bg-zinc-100 hover:bg-white text-zinc-950 font-medium text-xs transition-colors shrink-0">เริ่มใหม่</button>
+        </div>
+
+        <div class="w-full mt-6 flex items-center gap-2.5">
+          <button id="spinBtn" onclick="startRandomSpin()" class="flex-1 py-3.5 px-6 rounded-xl bg-zinc-100 hover:bg-white active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none text-zinc-950 font-semibold text-base tracking-wide transition-all cursor-pointer select-none">
+            <span id="spinBtnText">สุ่ม</span>
+          </button>
+
+          <button id="resetPoolBtn" onclick="resetModePool()" title="รีเซ็ตรอบการสุ่ม" class="hidden py-3.5 px-4 rounded-xl bg-[#111114] hover:bg-zinc-800 border border-white/[0.08] text-zinc-400 hover:text-zinc-200 text-sm transition-colors">
+            <i class="fa-solid fa-rotate-right"></i>
+          </button>
+        </div>
+      </section>
+
+      <section class="w-full mt-4 bg-[#16161a] rounded-2xl border border-white/[0.08] px-5 py-4">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-medium text-zinc-400">
+            ประวัติล่าสุด (<span id="historyCount">0</span>)
+          </span>
+          <button id="clearHistoryBtn" onclick="clearCurrentHistory()" disabled class="text-xs text-zinc-500 hover:text-zinc-300 disabled:opacity-30 disabled:pointer-events-none transition-colors">ล้างประวัติ</button>
+        </div>
+
+        <div id="historyList" class="flex flex-wrap gap-2 max-h-28 overflow-y-auto">
+          <p class="text-xs text-zinc-600 py-2">ยังไม่มีประวัติการสุ่ม</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="w-full text-center py-4 text-[11px] text-zinc-600">
+      กดปุ่ม
+      <kbd class="px-1.5 py-0.5 rounded bg-zinc-900 border border-white/[0.08] text-zinc-400 font-inter">Space</kbd>
+      เพื่อสุ่มอย่างรวดเร็ว
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
